@@ -84,7 +84,31 @@ div.pictures{
 div.preview{
   height:40%;
   width:58%;
-  background red;
+
+}
+
+div .r_txt{
+  height:100%;
+  width:58%;
+  background:#F5DE6A;
+  border-left-color: white;
+  border-left-style: solid;
+  border-left-width: 2%;
+  float: right;
+
+}
+div .r_img{
+  height:42%;
+  width:37%;
+  background:#F5DE6A;
+  float : left;
+  border-style: none;
+  padding-top: 5%;
+  padding-bottom:5%;
+  padding-left: 2%;
+  padding-right: 2%;
+  float: left;
+
 }
 div.result{
   width:100%;
@@ -139,7 +163,7 @@ div.bottom{
           <!--Select image to upload:--> <!--여기를 바꿔-->
           <input type='file' name="upload" id="upload"/>
           <input type="submit" value="확인" name="submit">
-          <input type="button" value="삭제" onclick="fileReset(this.form);">
+          <input type="button" value="삭제" id="filecancle" onclick="location.reload()">
     </div>
       <div class="pictures">
         <img id="img" />
@@ -149,7 +173,10 @@ div.bottom{
       </div>
     </div>
     <div class="result">
-      result
+      <div class="r_img">
+      </div>
+      <div class="r_txt">
+      </div>
     </div>
     <div class="bottom">
       sejong university capstone
