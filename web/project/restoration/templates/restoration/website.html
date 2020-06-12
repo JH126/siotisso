@@ -3,6 +3,7 @@
 <html>
 <head>
   <script src="/static/js/jquery-3.4.1.js"></script>
+
 <title>*번호잇소*</title>
 <style>
 html, body{
@@ -123,10 +124,12 @@ div .r_img{
   float: left;
 
 }
-div.result{
-  width:100%;
+#result{
+  width:97%;
   height: 25%;
   margin-bottom:2%;
+  padding-left: 3%;
+  padding-top:2%;
   background:#F5DE6A;
   border-top-width: 2px ;
   border-top-style : solid;
@@ -176,65 +179,141 @@ div.bottom{
   align-items: center;
   position : relative;
 }
+input{
+    margin :3%;
+}
+input[type = button]{
+    width:75px;
+    background-color: #4B89DC;
+    border: none;
+    border-radius:10px;
+    color:#fff;
+    padding: 10px 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    cursor: pointer;
+}
+input[type = submit]{
+    width:75px;
+    background-color: #4B89DC;
+    border: none;
+    border-radius:10px;
+    color:#fff;
+    padding: 10px 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    cursor: pointer;
+}
+p {
+    text-align : center;
+}
+
 </style>
 </head>
 <body>
   <div class="total">
     <div class="title01">
-      <img src=./logo.png width:30% height:50%>
+{% load static %}
+      <img src="{% static "logo.png" %}" width:30% height:50%>
 
     </div>
     <div class="box1">
       <div  class="file">
-       <form action="" method="post" enctype="multipart/form-data">
+       <form id="myform" action="" method="post" enctype="multipart/form-data">
          {% csrf_token %}
           <!--Select image to upload:--> <!--여기를 바꿔-->
           <input type='file' name="upload" id="upload"/>
-          <input type="submit" value="확인" name="submit">
+          <input type="submit" value="확인" name="submit" id="submit_btn">
           <input type="button" value="삭제" id="filecancle" onclick="location.reload()">
+       </form>
     </div>
-      <div class="pictures">
-        <img src=siotisso.ga/01.jpg width:100% height:auto>
-      <!--  <div id='preview'>
+      <div class="pictures" id="resultImg" style="overflow-y : auto">
+        <img src="" width:100% height:auto>
+        <!--  <div id='preview'>
       </div>-->
         <!--picture 프리뷰공간-->
       </div>
     </div>
-    <div class="result">
+
+    <div id="result">
+      <p></p>
     </div>
+
     <div class="bottom">
-      <img src=./under.png width:30% height:50%>
+{% load static %}
+      <img src={% static "under.png" %} width:30% height:50%>
     </div>
   </div>
 </body>
 
 <script>
-/*  var sel_file;
+$("#submit_btn").click( function() {
+  var formData = new FormData();
 
-  $(document).ready(function(){
-    $("#upload").on("change",handleImgFileSelect);
-  });
+  formData.append('upload',  document.getElementById('upload').files[0]);
+  console.log(formData);
+  $.ajax(
+    {
+      data: formData,
+      type: "POST",
+      url: '{% url "results" %}',
+      contentType: false,
+      processData: false,
+      success: function (data) {
+      },
+      beforeSend:function(){
+        $('#result').html("<p>동영상 분석 중입니다. 잠시만 기다려주세요.</p>");
+        $('#resultImg').html('<img src="" width:100% height:auto>');
+        $('#restart').remove()
+      },
+     timeout:0
+    })
 
-  function handleImgFileSelect(e){
-    var files=e.target.files;
-    var filesArr=Array.prototype.slice.call(files);
-
-    filesArr.forEach(function(f){
-      if(!f.type.match("image.*")){
-        alert(" 이미지만 가능");
-         return;
-      }
-      sel_file=f;
-
-      var reader=new FileReader();
-      reader.onload=function(e){
-        $("img").attr("src",e.target.result);
-      }
-      reader.readAsDataURL(f);
-    });
-  }*/
+  var varCounter = 0;
+  var varName = function(){ /* check the result file exist */
+  	if (varCounter <= 20) {
+		varCounter ++;
+		$.ajax({
+		url: '{% url 'check' %}',
+		contentType: false,
+		processData: false,
+		success : function (data) {
+			if (data == 'Nothing'){
+				alert("인식된 번호판이 없습니다.");
+				location.reload(true);
+			}
+			else if (data != 'false'){
+				var path = data.split("$$");
+				img_path = path[0].split("\n");
+				txt_path = path[1];
+				cnt = path[2];
+				$('#result').html("<p>분석 결과</p>");
+				for (var i = 0 ; i< cnt ; i++){
+					tmp = '<img src="' + img_path[i] + '" width:auto height:auto>';
+					$("#resultImg").append(tmp);
+				}
+				$('#result').append("<p>" + txt_path+"</p>");
+				$('#myform').append('<input type="button" value="다시하기" id="restart" onclick="location.reload()">')	
+				clearInterval(intervalid);
+			}
+	 	},
+		error: function(xhr) {
+			alert(xhr.statusText);
+		},
+	})
+	}
+	else {
+		clearInterval(intervalid);
+	}
+  }
+  intervalid = setInterval(varName, 20000);
+  return false;
+})
 
 </script>
-
 
 </html>

@@ -23,7 +23,6 @@ def main(args):
         if args.verbose:
             print( "Remove existing output folder")
         shutil.rmtree(args.output)
-
     os.makedirs(args.output)
 
     cap = cv2.VideoCapture()
@@ -142,9 +141,9 @@ if __name__ == "__main__":
     parser.add_argument('input', metavar='<input_video_file>', help="Input video file")
     parser.add_argument('output', metavar='<output_folder>', help="Output folder. If exists it will be removed")
     parser.add_argument('--maxframes', type=int, help="Output max number of frames")
-    parser.add_argument('--rotate', type=int, choices={90, 180, 270}, help="Rotate clock-wise output frames")
-    parser.add_argument('--exifmodel', help="An example photo file to fill output meta-tags")
-    parser.add_argument('--verbose', action='store_true', help="Enable verbose")
+    parser.add_argument('--rotate', default = False, type=int, choices={90, 180, 270}, help="Rotate clock-wise output frames")
+    parser.add_argument('--exifmodel', default = False, help="An example photo file to fill output meta-tags")
+    parser.add_argument('--verbose', default = False, action='store_true', help="Enable verbose")
 
     args = parser.parse_args()
     ret = main(args)

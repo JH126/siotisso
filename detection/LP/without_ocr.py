@@ -20,7 +20,10 @@ ap.add_argument("-c", "--confidence", type=float, default=0.5,
             help="minimum probability to filter weak detections")
 ap.add_argument("-t", "--threshold", type=float, default=0.3,
             help="threshold when applyong non-maxima suppression")
+ap.add_argument("-s", "--save")
 args = vars(ap.parse_args())
+
+save_path = args["save"]
 
 def yolo_license(args):
    
@@ -93,15 +96,22 @@ def yolo_license(args):
             color = [int(c) for c in COLORS[classIDs[i]]]
             cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
             cropped = Image.fromarray(image[y:y+h, x:x+w])
-            cropped.save('output/'+str(args['image']).split('.')[0]+'_predictions.jpg')
+            os.makedirs(save_path, exist_ok = True)
+            #img = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB) #bgr to rgb
+            #cv2.imwrite(save_path + 'plate' + str(i).zfill(2) + '.jpg', img)
+            cropped.save(save_path + 'plate' + str(i).zfill(2) + '.jpg') #modify
+            #cropped.save('output/'+str(args['image']).split('.')[0]+'_predictions.jpg')
             text = "{}: {:.4f}".format(
                 'Number Plate', confidences[i])
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                         0.5, color, 2)
+'''
     image = cv2.resize(image, (1280, 720))
     cv2.imshow("Image", image)
     #cv2.waitKey(0)
     image = cv2.imread('output/'+str(args['image']).split('.')[0]+'_prediction.jpg')
+    #if (image is None):
+    #    return 0
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     gray = cv2.medianBlur(gray, 3)
@@ -113,7 +123,7 @@ def yolo_license(args):
     cv2.imshow("cropped", image)
     #cv2.imshow("cropped_preprocessed", gray)
     cv2.destroyAllWindows()
-
+'''
 
 
 yolo_license(args)

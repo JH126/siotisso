@@ -17,7 +17,10 @@ ap.add_argument("-c", "--confidence", type=float, default=0.5,
 	help="minimum probability to filter weak detections")
 ap.add_argument("-t", "--threshold", type=float, default=0.3,
 	help="threshold when applyong non-maxima suppression")
+ap.add_argument("-s", "--save")
+
 args = vars(ap.parse_args())
+save_path = args["save"]
 
 labelsPath = os.path.sep.join([args["yolo"], "coco.names"])
 LABELS = open(labelsPath).read().strip().split("\n")
@@ -86,12 +89,13 @@ if len(idxs) > 0:
 		# draw a bounding box rectangle and label on the image
 		color = [int(c) for c in COLORS[classIDs[i]]]
 		cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
-		text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
-		cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
-			0.5, color, 2)
+		#text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
+		#cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
+		#	0.5, color, 2)
 		to = image[y:y+h,x:x+w]
-		cv2.imshow("Image{}".format(count), to)
-		cv2.imwrite("result{}.jpg".format(count), to)
+		#cv2.imshow("Image{}".format(count), to)
+		os.makedirs(save_path, exist_ok = True)
+		cv2.imwrite(save_path+"result{}.jpg".format(count), to)
 		count +=1
 
 # show the output image
